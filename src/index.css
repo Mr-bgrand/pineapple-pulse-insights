@@ -98,4 +98,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  table {
+    @apply w-full border-collapse;
+  }
+  
+  th {
+    @apply text-left p-4 bg-muted;
+  }
+  
+  td {
+    @apply p-4 border-t border-border;
+  }
 }
