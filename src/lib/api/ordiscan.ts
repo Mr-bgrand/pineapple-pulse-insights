@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { PineappleChild } from "../types/pineapple";
 
-const API_KEY = "5dcbe0d2-91bd-485c-975b-317c1c2365a4";
+const API_KEY = "86151a82-5dd8-4e3a-8a49-422db12d3ab5";
 
 const handleOpaqueResponse = (response: Response, inscriptionId: string) => {
   if (response.type === 'opaque') {
@@ -14,7 +14,7 @@ const handleOpaqueResponse = (response: Response, inscriptionId: string) => {
 export const fetchChildInscriptions = async (inscriptionId: string): Promise<PineappleChild[]> => {
   try {
     const response = await fetch(
-      `https://ordiscan.com/api/v1/inscription/${inscriptionId}/children`,
+      `https://api.ordiscan.com/v1/inscription/${inscriptionId}/children`,
       {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
@@ -48,7 +48,7 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
 export const fetchInscriptionDetails = async (inscriptionId: string) => {
   try {
     const response = await fetch(
-      `https://ordiscan.com/api/v1/inscription/${inscriptionId}`,
+      `https://api.ordiscan.com/v1/inscription/${inscriptionId}`,
       {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
