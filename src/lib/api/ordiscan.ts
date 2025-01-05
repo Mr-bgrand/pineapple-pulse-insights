@@ -3,6 +3,14 @@ import { PineappleChild } from "../types/pineapple";
 
 const API_KEY = "5dcbe0d2-91bd-485c-975b-317c1c2365a4";
 
+const handleOpaqueResponse = (response: Response, inscriptionId: string) => {
+  if (response.type === 'opaque') {
+    console.log(`Received opaque response for inscription ${inscriptionId} - this is expected with no-cors mode`);
+    return null;
+  }
+  return response;
+};
+
 export const fetchChildInscriptions = async (inscriptionId: string): Promise<PineappleChild[]> => {
   try {
     const response = await fetch(
@@ -15,19 +23,17 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
       }
     );
 
-    // Handle opaque response (no-cors mode)
-    if (response.type === 'opaque') {
-      console.log(`Received opaque response for child inscriptions of ${inscriptionId}`);
+    const handledResponse = handleOpaqueResponse(response, inscriptionId);
+    if (!handledResponse) {
       return [];
     }
 
-    // Handle non-ok responses
-    if (!response.ok) {
-      console.error(`Error fetching child inscriptions: ${response.status} ${response.statusText}`);
+    if (!handledResponse.ok) {
+      console.error(`Error fetching child inscriptions: ${handledResponse.status} ${handledResponse.statusText}`);
       return [];
     }
 
-    const data = await response.json();
+    const data = await handledResponse.json();
     return (data.data || []).map((child: any) => ({
       inscriptionId: child.inscription_id,
       timestamp: child.timestamp,
@@ -35,7 +41,6 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
     }));
   } catch (error) {
     console.error("Error fetching child inscriptions:", error);
-    toast.error("Failed to fetch child inscriptions");
     return [];
   }
 };
@@ -52,19 +57,17 @@ export const fetchInscriptionDetails = async (inscriptionId: string) => {
       }
     );
 
-    // Handle opaque response
-    if (response.type === 'opaque') {
-      console.log(`Received opaque response for inscription ${inscriptionId}`);
+    const handledResponse = handleOpaqueResponse(response, inscriptionId);
+    if (!handledResponse) {
       return null;
     }
 
-    // Handle non-ok responses
-    if (!response.ok) {
-      console.error(`Error fetching inscription details: ${response.status} ${response.statusText}`);
+    if (!handledResponse.ok) {
+      console.error(`Error fetching inscription details: ${handledResponse.status} ${handledResponse.statusText}`);
       return null;
     }
 
-    return await response.json();
+    return await handledResponse.json();
   } catch (error) {
     console.error(`Error fetching inscription ${inscriptionId}:`, error);
     return null;

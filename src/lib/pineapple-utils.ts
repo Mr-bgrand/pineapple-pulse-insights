@@ -10,6 +10,7 @@ export const fetchPineappleData = async (): Promise<Pineapple[]> => {
     const pineapples = [...MOCK_PINEAPPLES];
     
     for (const pineapple of pineapples) {
+      console.log(`Fetching details for inscription ${pineapple.inscriptionId}`);
       const inscriptionDetails = await fetchInscriptionDetails(pineapple.inscriptionId);
       
       if (inscriptionDetails) {
@@ -24,11 +25,14 @@ export const fetchPineappleData = async (): Promise<Pineapple[]> => {
         }
         
         if (pineapple.status === "detonated") {
+          console.log(`Fetching children for detonated pineapple ${pineapple.inscriptionId}`);
           const children = await fetchChildInscriptions(pineapple.inscriptionId);
           if (children.length > 0) {
             pineapple.lastChild = children[children.length - 1];
           }
         }
+      } else {
+        console.log(`No inscription details available for ${pineapple.inscriptionId}, using mock data`);
       }
     }
     
