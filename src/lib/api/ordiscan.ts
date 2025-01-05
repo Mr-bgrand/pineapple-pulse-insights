@@ -14,7 +14,7 @@ const handleOpaqueResponse = (response: Response, inscriptionId: string) => {
 export const fetchChildInscriptions = async (inscriptionId: string): Promise<PineappleChild[]> => {
   try {
     const response = await fetch(
-      `https://ordiscan.com/api/v1/inscriptions/${inscriptionId}/children`,
+      `https://ordiscan.com/api/v1/inscription/${inscriptionId}/children`,
       {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
@@ -48,7 +48,7 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
 export const fetchInscriptionDetails = async (inscriptionId: string) => {
   try {
     const response = await fetch(
-      `https://ordiscan.com/api/v1/inscriptions/${inscriptionId}`,
+      `https://ordiscan.com/api/v1/inscription/${inscriptionId}`,
       {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
