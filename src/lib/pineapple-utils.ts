@@ -84,8 +84,16 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
         headers: {
           Authorization: `Bearer ${API_KEY}`,
         },
+        mode: 'no-cors' // Add no-cors mode
       }
     );
+
+    // With no-cors, we can't access the response data directly
+    // We'll need to handle this case gracefully
+    if (response.type === 'opaque') {
+      console.log(`Received opaque response for child inscriptions of ${inscriptionId}`);
+      return [];
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -113,8 +121,15 @@ export const fetchInscriptionDetails = async (inscriptionId: string) => {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
         },
+        mode: 'no-cors' // Add no-cors mode
       }
     );
+
+    // Handle opaque response
+    if (response.type === 'opaque') {
+      console.log(`Received opaque response for inscription ${inscriptionId}`);
+      return null;
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
