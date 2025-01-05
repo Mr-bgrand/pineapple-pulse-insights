@@ -17,9 +17,9 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
       `https://api.ordiscan.com/v1/inscription/${inscriptionId}/children`,
       {
         headers: {
-          Authorization: `Bearer ${API_KEY}`,
-        },
-        mode: 'no-cors'
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       }
     );
 
@@ -51,9 +51,9 @@ export const fetchInscriptionDetails = async (inscriptionId: string) => {
       `https://api.ordiscan.com/v1/inscription/${inscriptionId}`,
       {
         headers: {
-          Authorization: `Bearer ${API_KEY}`,
-        },
-        mode: 'no-cors'
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       }
     );
 
