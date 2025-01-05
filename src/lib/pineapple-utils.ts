@@ -1,5 +1,11 @@
 import { toast } from "sonner";
 
+export interface PineappleChild {
+  inscriptionId: string;
+  timestamp: string;
+  contentUrl: string;
+}
+
 export interface Pineapple {
   name: string;
   inscriptionId: string;
@@ -9,6 +15,7 @@ export interface Pineapple {
   status: "active" | "inactive" | "error" | "detonated";
   rechargePeriod: number;
   color: string;
+  lastChild?: PineappleChild;
 }
 
 const MOCK_PINEAPPLES: Pineapple[] = [
@@ -24,9 +31,15 @@ const MOCK_PINEAPPLES: Pineapple[] = [
     name: "White Pineapple", 
     color: "White", 
     inscriptionId: "79467381", 
-    status: "inactive", 
+    status: "detonated", 
     rechargePeriod: 5,
-    activatedBlock: null 
+    activatedBlock: 100000,
+    detonationBlock: 100050,
+    lastChild: {
+      inscriptionId: "79467999",
+      timestamp: new Date().toISOString(),
+      contentUrl: "https://ordiscan.com/content/79467999"
+    }
   },
   { 
     name: "Red Pineapple", 
@@ -62,12 +75,52 @@ const MOCK_PINEAPPLES: Pineapple[] = [
   }
 ];
 
+export const fetchChildInscriptions = async (inscriptionId: string): Promise<PineappleChild[]> => {
+  try {
+    const API_KEY = "5dcbe0d2-91bd-485c-975b-317c1c2365a4";
+    const response = await fetch(
+      `https://ordiscan.com/api/v1/inscriptions/${inscriptionId}/children`,
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data.map((child: any) => ({
+      inscriptionId: child.inscription_id,
+      timestamp: child.timestamp,
+      contentUrl: child.content_url,
+    }));
+  } catch (error) {
+    console.error("Error fetching child inscriptions:", error);
+    toast.error("Failed to fetch child inscriptions");
+    return [];
+  }
+};
+
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
     // In production, replace with actual API call using the API key
     // API Key: 5dcbe0d2-91bd-485c-975b-317c1c2365a4
     const mockApiCall = () => new Promise((resolve) => setTimeout(() => resolve(MOCK_PINEAPPLES), 1000));
     const pineapples = await mockApiCall();
+    
+    // In production, fetch child inscriptions for each pineapple
+    for (const pineapple of pineapples) {
+      if (pineapple.status === "detonated") {
+        const children = await fetchChildInscriptions(pineapple.inscriptionId);
+        if (children.length > 0) {
+          pineapple.lastChild = children[children.length - 1];
+        }
+      }
+    }
+    
     return pineapples as Pineapple[];
   } catch (error) {
     console.error("Error fetching pineapple data:", error);

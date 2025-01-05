@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Pineapple, getStatusColor } from "@/lib/pineapple-utils";
-import { Clock, Activity } from "lucide-react";
+import { Clock, Activity, Zap } from "lucide-react";
 
 interface PineappleCardProps {
   pineapple: Pineapple;
@@ -27,6 +27,15 @@ export function PineappleCard({ pineapple, currentBlock }: PineappleCardProps) {
           <div className="flex items-center space-x-2 text-gray-400">
             <Clock className="h-4 w-4" />
             <span>Block {pineapple.activatedBlock}</span>
+          </div>
+        )}
+        
+        {pineapple.lastChild && (
+          <div className="mt-2 p-2 bg-dashboard-bg rounded-lg">
+            <div className="flex items-center space-x-2 text-gray-400">
+              <Zap className="h-4 w-4" />
+              <span className="text-xs">Last Child: {pineapple.lastChild.inscriptionId}</span>
+            </div>
           </div>
         )}
         
