@@ -92,7 +92,7 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
     }
 
     const data = await response.json();
-    return data.data.map((child: any) => ({
+    return (data.data || []).map((child: any) => ({
       inscriptionId: child.inscription_id,
       timestamp: child.timestamp,
       contentUrl: child.content_url,
@@ -104,28 +104,69 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
   }
 };
 
+export const fetchInscriptionDetails = async (inscriptionId: string) => {
+  try {
+    const API_KEY = "5dcbe0d2-91bd-485c-975b-317c1c2365a4";
+    const response = await fetch(
+      `https://ordiscan.com/api/v1/inscriptions/${inscriptionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${API_KEY}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(`Error fetching inscription ${inscriptionId}:`, error);
+    return null;
+  }
+};
+
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
-    // In production, replace with actual API call using the API key
-    // API Key: 5dcbe0d2-91bd-485c-975b-317c1c2365a4
-    const mockApiCall = () => new Promise((resolve) => setTimeout(() => resolve(MOCK_PINEAPPLES), 1000));
-    const pineapples = await mockApiCall();
+    const pineapples = [...MOCK_PINEAPPLES]; // Start with mock data structure
     
-    // In production, fetch child inscriptions for each pineapple
+    // Fetch real data for each pineapple
     for (const pineapple of pineapples) {
-      if (pineapple.status === "detonated") {
-        const children = await fetchChildInscriptions(pineapple.inscriptionId);
-        if (children.length > 0) {
-          pineapple.lastChild = children[children.length - 1];
+      const inscriptionDetails = await fetchInscriptionDetails(pineapple.inscriptionId);
+      
+      if (inscriptionDetails) {
+        // Update pineapple with real data
+        if (inscriptionDetails.genesis_timestamp) {
+          const genesisDate = new Date(inscriptionDetails.genesis_timestamp);
+          const blockHeight = inscriptionDetails.genesis_height;
+          
+          // Update activation status based on real data
+          if (blockHeight) {
+            pineapple.activatedBlock = blockHeight;
+            pineapple.status = "active";
+            
+            // Calculate detonation block (example: activation + 144 blocks)
+            pineapple.detonationBlock = blockHeight + 144;
+          }
+        }
+        
+        // For detonated pineapples, fetch child inscriptions
+        if (pineapple.status === "detonated") {
+          const children = await fetchChildInscriptions(pineapple.inscriptionId);
+          if (children.length > 0) {
+            pineapple.lastChild = children[children.length - 1];
+          }
         }
       }
     }
     
-    return pineapples as Pineapple[];
+    return pineapples;
   } catch (error) {
     console.error("Error fetching pineapple data:", error);
     toast.error("Failed to fetch pineapple data");
-    return [];
+    return MOCK_PINEAPPLES; // Fallback to mock data on error
   }
 };
 
