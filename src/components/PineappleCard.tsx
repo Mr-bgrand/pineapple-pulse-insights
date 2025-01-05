@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Pineapple, getStatusColor } from "@/lib/pineapple-utils";
+import { Pineapple, getStatusColor } from "@/lib/types/pineapple";
 import { Clock, Activity, Zap } from "lucide-react";
 
 interface PineappleCardProps {
