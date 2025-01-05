@@ -3,24 +3,69 @@ import { toast } from "sonner";
 export interface Pineapple {
   name: string;
   inscriptionId: string;
-  activatedBlock?: number;
+  activatedBlock?: number | null;
   detonationBlock?: number;
   lotionDeadlineBlock?: number;
   status: "active" | "inactive" | "error" | "detonated";
+  rechargePeriod: number;
+  color: string;
 }
 
 const MOCK_PINEAPPLES: Pineapple[] = [
-  { name: "White Pineapple", inscriptionId: "INSCRIPTION_ID_1", status: "inactive" },
-  { name: "Blue Pineapple", inscriptionId: "INSCRIPTION_ID_2", status: "active" },
-  { name: "Green Pineapple", inscriptionId: "INSCRIPTION_ID_3", status: "inactive" },
-  { name: "Yellow Pineapple", inscriptionId: "INSCRIPTION_ID_4", status: "active" },
-  { name: "Red Pineapple", inscriptionId: "INSCRIPTION_ID_5", status: "inactive" },
-  { name: "Black Pineapple", inscriptionId: "INSCRIPTION_ID_6", status: "detonated" },
+  { 
+    name: "Yellow Pineapple", 
+    color: "Yellow", 
+    inscriptionId: "79467382", 
+    status: "inactive", 
+    rechargePeriod: 6,
+    activatedBlock: null 
+  },
+  { 
+    name: "White Pineapple", 
+    color: "White", 
+    inscriptionId: "79467381", 
+    status: "inactive", 
+    rechargePeriod: 5,
+    activatedBlock: null 
+  },
+  { 
+    name: "Red Pineapple", 
+    color: "Red", 
+    inscriptionId: "79467380", 
+    status: "inactive", 
+    rechargePeriod: 7,
+    activatedBlock: null 
+  },
+  { 
+    name: "Green Pineapple", 
+    color: "Green", 
+    inscriptionId: "79467379", 
+    status: "inactive", 
+    rechargePeriod: 7,
+    activatedBlock: null 
+  },
+  { 
+    name: "Blue Pineapple", 
+    color: "Blue", 
+    inscriptionId: "79467378", 
+    status: "inactive", 
+    rechargePeriod: 7,
+    activatedBlock: null 
+  },
+  { 
+    name: "Black Pineapple", 
+    color: "Black", 
+    inscriptionId: "79467377", 
+    status: "inactive", 
+    rechargePeriod: 6,
+    activatedBlock: null 
+  }
 ];
 
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
-    // In production, replace with actual API call
+    // In production, replace with actual API call using the API key
+    // API Key: 5dcbe0d2-91bd-485c-975b-317c1c2365a4
     const mockApiCall = () => new Promise((resolve) => setTimeout(() => resolve(MOCK_PINEAPPLES), 1000));
     const pineapples = await mockApiCall();
     return pineapples as Pineapple[];
