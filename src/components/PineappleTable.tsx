@@ -51,7 +51,7 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                   {formatBlockAndTime(pineapple.lotionDeadlineBlock, currentBlock)}
                 </TableCell>
                 <TableCell>
-                  {formatBlockAndTime(pineapple.cooldownBlock, currentBlock)}
+                  {formatBlockAndTime(pineapple.cooldown, currentBlock)}
                 </TableCell>
                 <TableCell>
                   {formatBlockAndTime(pineapple.detonationBlock, currentBlock)}
