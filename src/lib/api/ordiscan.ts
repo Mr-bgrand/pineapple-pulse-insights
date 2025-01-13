@@ -5,41 +5,38 @@ const API_KEY = "86151a82-5dd8-4e3a-8a49-422db12d3ab5";
 
 const fetchWithCORS = async (url: string) => {
   try {
+    // First attempt: direct API call with CORS headers
     const response = await fetch(url, {
       headers: {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
-      mode: 'cors', // Try with regular CORS first
+      mode: 'cors',
       credentials: 'omit'
     });
     
-    if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
+    if (response.ok) {
+      return response;
+    }
+    
+    // If direct call fails, try with CORS proxy
+    console.log(`Direct API call failed, trying CORS proxy for ${url}`);
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    const proxyResponse = await fetch(proxyUrl, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!proxyResponse.ok) {
+      console.error(`Proxy HTTP error! status: ${proxyResponse.status}`);
       return null;
     }
     
-    return response;
+    return proxyResponse;
   } catch (error) {
     console.error(`Fetch error for ${url}:`, error);
-    // If CORS error, try with proxy
-    if (error instanceof TypeError && error.message.includes('CORS')) {
-      try {
-        // Use a CORS proxy
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-        const proxyResponse = await fetch(proxyUrl);
-        
-        if (!proxyResponse.ok) {
-          console.error(`Proxy HTTP error! status: ${proxyResponse.status}`);
-          return null;
-        }
-        
-        return proxyResponse;
-      } catch (proxyError) {
-        console.error(`Proxy fetch error for ${url}:`, proxyError);
-        return null;
-      }
-    }
     return null;
   }
 };
