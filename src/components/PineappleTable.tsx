@@ -51,13 +51,15 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                 <TableCell className="capitalize">{pineapple.status}</TableCell>
                 <TableCell>{pineapple.activatedBlock || "N/A"}</TableCell>
                 <TableCell>
-                  {pineapple.lotionDeadlineBlock ? (
-                    <>
-                      {pineapple.lotionDeadlineBlock}
-                      <span className="ml-2 text-sm text-gray-400">
-                        ({calculateLotionTimeRemaining(pineapple.activatedBlock, pineapple.lotionDeadlineBlock, currentBlock)})
-                      </span>
-                    </>
+                  {pineapple.activatedBlock ? (
+                    pineapple.lotionDeadlineBlock ? (
+                      <>
+                        {pineapple.lotionDeadlineBlock}
+                        <span className="ml-2 text-sm text-gray-400">
+                          ({calculateLotionTimeRemaining(pineapple.activatedBlock, pineapple.lotionDeadlineBlock, currentBlock)})
+                        </span>
+                      </>
+                    ) : "N/A"
                   ) : "N/A"}
                 </TableCell>
                 <TableCell>
@@ -71,7 +73,11 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                   ) : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {formatBlockAndTime(pineapple.detonationBlock, currentBlock)}
+                  {pineapple.activatedBlock ? (
+                    pineapple.detonationBlock ? (
+                      formatBlockAndTime(pineapple.detonationBlock, currentBlock)
+                    ) : "N/A"
+                  ) : "N/A"}
                 </TableCell>
               </TableRow>
             ))
