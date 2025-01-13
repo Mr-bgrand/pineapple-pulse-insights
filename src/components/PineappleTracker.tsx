@@ -11,10 +11,17 @@ import { toast } from "sonner";
 export function PineappleTracker() {
   const [currentBlock, setCurrentBlock] = useState<number | null>(null);
 
-  const { data: pineapples = [], isLoading, refetch } = useQuery({
+  const { data: pineapples = [], isLoading, error, refetch } = useQuery({
     queryKey: ["pineapples"],
     queryFn: fetchPineappleData,
     refetchInterval: 30000, // Refetch every 30 seconds
+    onSuccess: (data) => {
+      console.log("Successfully fetched pineapples:", data);
+    },
+    onError: (err) => {
+      console.error("Error fetching pineapples:", err);
+      toast.error("Failed to fetch pineapple data");
+    }
   });
 
   // Fetch current block height
@@ -33,6 +40,11 @@ export function PineappleTracker() {
     const interval = setInterval(fetchBlockHeight, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
+
+  if (error) {
+    console.error("Render error:", error);
+    return <div className="p-6 text-red-500">Error loading pineapple data</div>;
+  }
 
   return (
     <div className="p-6 min-h-screen bg-dashboard-bg text-white">
