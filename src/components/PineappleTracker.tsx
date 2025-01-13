@@ -4,6 +4,7 @@ import { Pineapple, fetchPineappleData, fetchCurrentBlockHeight } from "@/lib/pi
 import { PineappleCard } from "./PineappleCard";
 import { PineappleStats } from "./PineappleStats";
 import { PineappleTable } from "./PineappleTable";
+import { PizzaPetsDisplay } from "./PizzaPetsDisplay";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Blocks } from "lucide-react";
 import { toast } from "sonner";
@@ -92,6 +93,8 @@ export function PineappleTracker() {
                 />
               ))}
             </div>
+
+            <PizzaPetsDisplay />
           </>
         )}
       </div>
