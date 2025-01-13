@@ -38,12 +38,16 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
     });
 
     const tokens = Array.isArray(data) ? data : data.tokens || [];
+    console.log('Raw token data:', tokens);
+
     const filteredTokens = tokens.filter(token => token.collectionSymbol === collectionFilter);
 
     if (filteredTokens.length === 0) {
-      console.log('No Pizza Pets found');
+      console.log(`No tokens found in the collection "${collectionFilter}".`);
       return [];
     }
+
+    console.log(`Found ${filteredTokens.length} tokens in the collection "${collectionFilter}".`);
 
     return filteredTokens.map(token => ({
       meta: {
