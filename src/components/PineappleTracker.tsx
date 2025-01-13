@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Pineapple, fetchPineappleData } from "@/lib/pineapple-utils";
+import { Pineapple, fetchPineappleData, fetchCurrentBlockHeight } from "@/lib/pineapple-utils";
 import { PineappleCard } from "./PineappleCard";
 import { PineappleStats } from "./PineappleStats";
 import { PineappleTable } from "./PineappleTable";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Blocks } from "lucide-react";
+import { toast } from "sonner";
 
 export function PineappleTracker() {
-  const [currentBlock, setCurrentBlock] = useState(100000); // Mock current block
+  const [currentBlock, setCurrentBlock] = useState<number | null>(null);
 
   const { data: pineapples = [], isLoading, refetch } = useQuery({
     queryKey: ["pineapples"],
@@ -16,11 +17,20 @@ export function PineappleTracker() {
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
-  // Simulate block updates
+  // Fetch current block height
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBlock(prev => prev + 1);
-    }, 10000); // New block every 10 seconds for demo
+    const fetchBlockHeight = async () => {
+      try {
+        const height = await fetchCurrentBlockHeight();
+        setCurrentBlock(height);
+      } catch (error) {
+        console.error("Error fetching block height:", error);
+        toast.error("Failed to fetch current block height");
+      }
+    };
+
+    fetchBlockHeight();
+    const interval = setInterval(fetchBlockHeight, 60000); // Update every minute
     return () => clearInterval(interval);
   }, []);
 
@@ -32,7 +42,7 @@ export function PineappleTracker() {
             <h1 className="text-3xl font-bold">Pineapple Tracker</h1>
             <div className="flex items-center mt-2 text-gray-400">
               <Blocks className="h-4 w-4 mr-2" />
-              <span>Current Block: {currentBlock}</span>
+              <span>Current Block: {currentBlock ?? "Loading..."}</span>
             </div>
           </div>
           <Button
@@ -64,7 +74,7 @@ export function PineappleTracker() {
                 <PineappleCard
                   key={pineapple.inscriptionId}
                   pineapple={pineapple}
-                  currentBlock={currentBlock}
+                  currentBlock={currentBlock ?? 0}
                 />
               ))}
             </div>

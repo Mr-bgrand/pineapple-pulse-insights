@@ -5,18 +5,33 @@ import { fetchInscriptionDetails, fetchChildInscriptions } from "./api/ordiscan"
 export * from "./types/pineapple";
 export * from "./utils/status-utils";
 
+export const fetchCurrentBlockHeight = async (): Promise<number> => {
+  try {
+    const response = await fetch('https://mempool.space/api/blocks/tip/height');
+    if (!response.ok) {
+      throw new Error('Failed to fetch current block height');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching block height:", error);
+    throw error;
+  }
+};
+
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
-    // Fetch data from the new API endpoint
     const response = await fetch('https://us-central1-pizza-pets.cloudfunctions.net/monitor_pineapples');
     if (!response.ok) {
       throw new Error('Failed to fetch pineapple data');
     }
     
-    const pineapples: Pineapple[] = await response.json();
+    const data = await response.json();
+    const pineapples: Pineapple[] = Array.isArray(data) ? data : [];
     
     // Enrich the data with inscription details
     for (const pineapple of pineapples) {
+      if (!pineapple.inscriptionId) continue;
+      
       console.log(`Fetching details for inscription ${pineapple.inscriptionId}`);
       const inscriptionDetails = await fetchInscriptionDetails(pineapple.inscriptionId);
       
