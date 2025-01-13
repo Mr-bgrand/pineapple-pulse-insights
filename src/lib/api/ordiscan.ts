@@ -10,23 +10,36 @@ const fetchWithCORS = async (url: string) => {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
-      mode: 'no-cors', // Change to no-cors to handle the CORS issue
+      mode: 'cors', // Try with regular CORS first
       credentials: 'omit'
     });
     
-    if (!response.ok && response.type !== 'opaque') {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    // Handle opaque response
-    if (response.type === 'opaque') {
-      console.log('Received opaque response - this is expected with no-cors mode');
+    if (!response.ok) {
+      console.error(`HTTP error! status: ${response.status}`);
       return null;
     }
     
     return response;
   } catch (error) {
     console.error(`Fetch error for ${url}:`, error);
+    // If CORS error, try with proxy
+    if (error instanceof TypeError && error.message.includes('CORS')) {
+      try {
+        // Use a CORS proxy
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        const proxyResponse = await fetch(proxyUrl);
+        
+        if (!proxyResponse.ok) {
+          console.error(`Proxy HTTP error! status: ${proxyResponse.status}`);
+          return null;
+        }
+        
+        return proxyResponse;
+      } catch (proxyError) {
+        console.error(`Proxy fetch error for ${url}:`, proxyError);
+        return null;
+      }
+    }
     return null;
   }
 };
