@@ -18,6 +18,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     activatedBlock: 877704,
     detonationBlock: 877776,
     lotionDeadlineBlock: 877742, // 877704 + 38
+    cooldownBlock: 877759, // example cooldown block
     lastChild: {
       inscriptionId: "79467999",
       timestamp: new Date().toISOString(),
@@ -41,6 +42,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     activatedBlock: 878289,
     detonationBlock: 878361,
     lotionDeadlineBlock: 878327, // 878289 + 38
+    cooldownBlock: 878344, // example cooldown block
     lastChild: {
       inscriptionId: "79468001",
       timestamp: new Date().toISOString(),
@@ -56,6 +58,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     activatedBlock: 878058,
     detonationBlock: 878130,
     lotionDeadlineBlock: 878096, // 878058 + 38
+    cooldownBlock: 878113, // example cooldown block
     lastChild: {
       inscriptionId: "79468002",
       timestamp: new Date().toISOString(),
@@ -71,6 +74,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     activatedBlock: 877861,
     detonationBlock: 877933,
     lotionDeadlineBlock: 877899, // 877861 + 38
+    cooldownBlock: 877916, // example cooldown block
     lastChild: {
       inscriptionId: "79468003",
       timestamp: new Date().toISOString(),
