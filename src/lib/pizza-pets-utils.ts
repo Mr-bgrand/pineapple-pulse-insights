@@ -33,6 +33,7 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
     console.log('Fetching Pizza Pets - Starting API call');
     console.log('Using wallet address:', walletAddress);
     console.log('Using proxy URL:', proxyUrl);
+    console.log('Collection filter:', collectionFilter);
     
     const { data } = await axios.get(proxyUrl);
     console.log('Fetching Pizza Pets - Raw API Response:', JSON.stringify(data, null, 2));
@@ -47,6 +48,7 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
       const isMatch = token.collectionSymbol === collectionFilter ||
         (token.collection && token.collection.symbol === collectionFilter);
       console.log(`Token ${token.id} collection match: ${isMatch}`);
+      console.log('Token details:', JSON.stringify(token, null, 2));
       return isMatch;
     });
     
