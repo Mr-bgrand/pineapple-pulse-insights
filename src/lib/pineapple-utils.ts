@@ -18,6 +18,20 @@ export const fetchCurrentBlockHeight = async (): Promise<number> => {
   }
 };
 
+interface ApiResponse {
+  logs: string[];
+  pineapples: {
+    color: string;
+    cooldown_block: number | null;
+    cooldown_period: number;
+    detonation_block: number | null;
+    inscription: string;
+    last_activation: number | null;
+    lotion_block: number | null;
+  }[];
+  status: string;
+}
+
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
     console.log("Fetching pineapple data...");
@@ -26,9 +40,24 @@ export const fetchPineappleData = async (): Promise<Pineapple[]> => {
       throw new Error('Failed to fetch pineapple data');
     }
     
-    const data = await response.json();
+    const data: ApiResponse = await response.json();
     console.log("Received pineapple data:", data);
-    const pineapples: Pineapple[] = Array.isArray(data) ? data : [];
+    
+    if (!data.pineapples) {
+      console.error("No pineapples array in response");
+      return [];
+    }
+
+    const pineapples: Pineapple[] = data.pineapples.map(p => ({
+      name: p.color + " Pineapple",
+      inscriptionId: p.inscription,
+      activatedBlock: p.last_activation,
+      detonationBlock: p.detonation_block || undefined,
+      lotionDeadlineBlock: p.lotion_block || undefined,
+      status: p.detonation_block ? "detonated" : p.last_activation ? "active" : "inactive",
+      rechargePeriod: p.cooldown_period,
+      color: p.color.toLowerCase()
+    }));
     
     // Enrich the data with inscription details
     for (const pineapple of pineapples) {
@@ -37,26 +66,12 @@ export const fetchPineappleData = async (): Promise<Pineapple[]> => {
       console.log(`Fetching details for inscription ${pineapple.inscriptionId}`);
       const inscriptionDetails = await fetchInscriptionDetails(pineapple.inscriptionId);
       
-      if (inscriptionDetails) {
-        if (inscriptionDetails.genesis_timestamp) {
-          const blockHeight = inscriptionDetails.genesis_height;
-          
-          if (blockHeight) {
-            pineapple.activatedBlock = blockHeight;
-            pineapple.status = "active";
-            pineapple.detonationBlock = blockHeight + 144;
-          }
+      if (pineapple.status === "detonated") {
+        console.log(`Fetching children for detonated pineapple ${pineapple.inscriptionId}`);
+        const children = await fetchChildInscriptions(pineapple.inscriptionId);
+        if (children.length > 0) {
+          pineapple.lastChild = children[children.length - 1];
         }
-        
-        if (pineapple.status === "detonated") {
-          console.log(`Fetching children for detonated pineapple ${pineapple.inscriptionId}`);
-          const children = await fetchChildInscriptions(pineapple.inscriptionId);
-          if (children.length > 0) {
-            pineapple.lastChild = children[children.length - 1];
-          }
-        }
-      } else {
-        console.log(`No inscription details available for ${pineapple.inscriptionId}, using API data`);
       }
     }
     
