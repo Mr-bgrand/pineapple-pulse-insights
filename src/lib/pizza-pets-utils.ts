@@ -26,13 +26,15 @@ export interface PizzaPet {
 export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
   const walletAddress = 'bc1pk0ctmslve0v6eg6snka6em0kmykg2kmtjerk2alv2ncdmw60s4cs2le2w8';
   const baseUrl = 'https://api-mainnet.magiceden.us/v2/ord/btc/tokens';
-  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(`${baseUrl}?ownerAddress=${walletAddress}`)}`;
+  const queryParams = `?ownerAddress=${walletAddress}`;
+  const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(baseUrl + queryParams)}`;
   const collectionFilter = "pizza-pets";
 
   try {
     console.log('Fetching Pizza Pets - Starting API call');
     console.log('Using wallet address:', walletAddress);
     console.log('Using base URL:', baseUrl);
+    console.log('Using full URL:', baseUrl + queryParams);
     console.log('Using proxy URL:', proxyUrl);
     console.log('Collection filter:', collectionFilter);
     
