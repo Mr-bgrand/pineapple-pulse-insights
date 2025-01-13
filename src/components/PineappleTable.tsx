@@ -17,6 +17,12 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
   // Get current block from window object (set by PineappleTracker)
   const currentBlock = (window as any).currentBlock || 0;
   
+  const formatBlockAndTime = (block: number | null, currentBlock: number) => {
+    if (!block) return "N/A";
+    const timeRemaining = calculateTimeRemaining(block, currentBlock);
+    return `${block} (Est. ${timeRemaining})`;
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -26,9 +32,9 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
             <TableHead>Inscription ID</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Activated Block</TableHead>
-            <TableHead>Lotion Deadline (D:HH:mm)</TableHead>
-            <TableHead>Cooldown (D:HH:mm)</TableHead>
-            <TableHead>Detonation (D:HH:mm)</TableHead>
+            <TableHead>Lotion Deadline</TableHead>
+            <TableHead>Cooldown</TableHead>
+            <TableHead>Detonation</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -42,13 +48,13 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                 <TableCell className="capitalize">{pineapple.status}</TableCell>
                 <TableCell>{pineapple.activatedBlock || "N/A"}</TableCell>
                 <TableCell>
-                  {calculateTimeRemaining(pineapple.lotionDeadlineBlock, currentBlock)}
+                  {formatBlockAndTime(pineapple.lotionDeadlineBlock, currentBlock)}
                 </TableCell>
                 <TableCell>
-                  {calculateTimeRemaining(pineapple.cooldownBlock, currentBlock)}
+                  {formatBlockAndTime(pineapple.cooldownBlock, currentBlock)}
                 </TableCell>
                 <TableCell>
-                  {calculateTimeRemaining(pineapple.detonationBlock, currentBlock)}
+                  {formatBlockAndTime(pineapple.detonationBlock, currentBlock)}
                 </TableCell>
               </TableRow>
             ))
