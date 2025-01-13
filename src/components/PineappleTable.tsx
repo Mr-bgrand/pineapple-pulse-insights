@@ -7,20 +7,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pineapple } from "@/lib/pineapple-utils";
-import { calculateTimeRemaining } from "@/lib/utils/status-utils";
+import { 
+  calculateTimeRemaining, 
+  calculateLotionTimeRemaining,
+  calculateCooldownTimeRemaining 
+} from "@/lib/utils/status-utils";
 
 interface PineappleTableProps {
   pineapples: Pineapple[];
 }
 
 export function PineappleTable({ pineapples }: PineappleTableProps) {
-  // Get current block from window object (set by PineappleTracker)
   const currentBlock = (window as any).currentBlock || 0;
   
   const formatBlockAndTime = (block: number | null, currentBlock: number) => {
     if (!block) return "N/A";
     const timeRemaining = calculateTimeRemaining(block, currentBlock);
-    return `${block} (Est. ${timeRemaining})`;
+    return `${block} (${timeRemaining})`;
   };
 
   return (
@@ -48,10 +51,24 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                 <TableCell className="capitalize">{pineapple.status}</TableCell>
                 <TableCell>{pineapple.activatedBlock || "N/A"}</TableCell>
                 <TableCell>
-                  {formatBlockAndTime(pineapple.lotionDeadlineBlock, currentBlock)}
+                  {pineapple.lotionDeadlineBlock ? (
+                    <>
+                      {pineapple.lotionDeadlineBlock}
+                      <span className="ml-2 text-sm text-gray-400">
+                        ({calculateLotionTimeRemaining(pineapple.activatedBlock, pineapple.lotionDeadlineBlock, currentBlock)})
+                      </span>
+                    </>
+                  ) : "N/A"}
                 </TableCell>
                 <TableCell>
-                  {formatBlockAndTime(pineapple.cooldown, currentBlock)}
+                  {pineapple.cooldownBlock ? (
+                    <>
+                      {pineapple.cooldownBlock}
+                      <span className="ml-2 text-sm text-gray-400">
+                        ({calculateCooldownTimeRemaining(pineapple.cooldownBlock, currentBlock)})
+                      </span>
+                    </>
+                  ) : "N/A"}
                 </TableCell>
                 <TableCell>
                   {formatBlockAndTime(pineapple.detonationBlock, currentBlock)}
