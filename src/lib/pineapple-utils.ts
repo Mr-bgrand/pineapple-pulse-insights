@@ -20,12 +20,14 @@ export const fetchCurrentBlockHeight = async (): Promise<number> => {
 
 export const fetchPineappleData = async (): Promise<Pineapple[]> => {
   try {
+    console.log("Fetching pineapple data...");
     const response = await fetch('https://us-central1-pizza-pets.cloudfunctions.net/monitor_pineapples');
     if (!response.ok) {
       throw new Error('Failed to fetch pineapple data');
     }
     
     const data = await response.json();
+    console.log("Received pineapple data:", data);
     const pineapples: Pineapple[] = Array.isArray(data) ? data : [];
     
     // Enrich the data with inscription details
