@@ -15,6 +15,7 @@ export interface PizzaPetMeta {
   name: string;
   attributes: any[];
   imageUrl: string;
+  inscriptionId: string;
 }
 
 export interface PizzaPet {
@@ -37,7 +38,6 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
       }
     });
 
-    // Handle both array response and object with tokens property
     const tokens = data.tokens || data || [];
     console.log('Raw token data:', tokens);
 
@@ -58,6 +58,7 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
         name: token.meta?.name || `Token ID: ${token.inscriptionNumber}` || 'Unknown',
         attributes: token.meta?.attributes || [],
         imageUrl: token.meta?.collection_page_img_url || token.contentPreviewURI || '',
+        inscriptionId: token.id || '',
       },
       stats: {
         type: token.meta?.attributes?.find(attr => attr.trait_type === 'Elemental Type')?.value || 'Loading...',
