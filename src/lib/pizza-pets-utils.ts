@@ -32,26 +32,41 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
   try {
     console.log('Fetching Pizza Pets - Starting API call');
     console.log('Using wallet address:', walletAddress);
+    console.log('Using base URL:', baseUrl);
     console.log('Using proxy URL:', proxyUrl);
     console.log('Collection filter:', collectionFilter);
     
-    const { data } = await axios.get(proxyUrl);
-    console.log('Fetching Pizza Pets - Raw API Response:', JSON.stringify(data, null, 2));
+    const response = await axios.get(proxyUrl);
+    console.log('Fetching Pizza Pets - API Response Status:', response.status);
+    console.log('Fetching Pizza Pets - API Response Headers:', response.headers);
+    console.log('Fetching Pizza Pets - Raw API Response:', JSON.stringify(response.data, null, 2));
 
-    if (!data.tokens) {
+    if (!response.data) {
+      console.log('No data received from API');
+      return [];
+    }
+
+    if (!response.data.tokens) {
       console.log('No tokens array found in response');
       return [];
     }
 
+    console.log('Total tokens received:', response.data.tokens.length);
+
     // Filter for pizza-pets collection
-    const pizzaPets = data.tokens.filter(token => {
+    const pizzaPets = response.data.tokens.filter(token => {
+      console.log('Checking token:', token.id);
+      console.log('Token collection symbol:', token.collectionSymbol);
+      console.log('Token collection details:', token.collection);
+      
       const isMatch = token.collectionSymbol === collectionFilter ||
         (token.collection && token.collection.symbol === collectionFilter);
+      
       console.log(`Token ${token.id} collection match: ${isMatch}`);
-      console.log('Token details:', JSON.stringify(token, null, 2));
       return isMatch;
     });
     
+    console.log('Fetching Pizza Pets - Filtered Pets Count:', pizzaPets.length);
     console.log('Fetching Pizza Pets - Filtered Pets:', JSON.stringify(pizzaPets, null, 2));
 
     return pizzaPets.map(token => {
@@ -87,8 +102,17 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
     if (axios.isAxiosError(error)) {
       console.error('Axios Error Details:', {
         message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
+        response: {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          headers: error.response?.headers,
+        },
+        request: {
+          method: error.config?.method,
+          url: error.config?.url,
+          headers: error.config?.headers,
+        }
       });
     }
     throw error;
