@@ -15,12 +15,14 @@ export function PineappleTracker() {
     queryKey: ["pineapples"],
     queryFn: fetchPineappleData,
     refetchInterval: 30000, // Refetch every 30 seconds
-    onSuccess: (data) => {
-      console.log("Successfully fetched pineapples:", data);
-    },
-    onError: (err) => {
-      console.error("Error fetching pineapples:", err);
-      toast.error("Failed to fetch pineapple data");
+    meta: {
+      onSuccess: (data: Pineapple[]) => {
+        console.log("Successfully fetched pineapples:", data);
+      },
+      onError: (err: Error) => {
+        console.error("Error fetching pineapples:", err);
+        toast.error("Failed to fetch pineapple data");
+      }
     }
   });
 
