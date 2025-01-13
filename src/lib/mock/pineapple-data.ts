@@ -17,6 +17,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     rechargePeriod: 5,
     activatedBlock: 877704,
     detonationBlock: 877776,
+    lotionDeadlineBlock: 877742, // 877704 + 38
     lastChild: {
       inscriptionId: "79467999",
       timestamp: new Date().toISOString(),
@@ -39,6 +40,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     rechargePeriod: 7,
     activatedBlock: 878289,
     detonationBlock: 878361,
+    lotionDeadlineBlock: 878327, // 878289 + 38
     lastChild: {
       inscriptionId: "79468001",
       timestamp: new Date().toISOString(),
@@ -53,6 +55,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     rechargePeriod: 7,
     activatedBlock: 878058,
     detonationBlock: 878130,
+    lotionDeadlineBlock: 878096, // 878058 + 38
     lastChild: {
       inscriptionId: "79468002",
       timestamp: new Date().toISOString(),
@@ -67,6 +70,7 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     rechargePeriod: 6,
     activatedBlock: 877861,
     detonationBlock: 877933,
+    lotionDeadlineBlock: 877899, // 877861 + 38
     lastChild: {
       inscriptionId: "79468003",
       timestamp: new Date().toISOString(),

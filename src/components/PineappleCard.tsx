@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Pineapple } from "@/lib/types/pineapple";
 import { getStatusColor } from "@/lib/utils/status-utils";
-import { Clock, Activity, Zap } from "lucide-react";
+import { Clock, Activity, Zap, Timer } from "lucide-react";
 
 interface PineappleCardProps {
   pineapple: Pineapple;
@@ -28,6 +28,13 @@ export function PineappleCard({ pineapple, currentBlock }: PineappleCardProps) {
           <div className="flex items-center space-x-2 text-gray-400">
             <Clock className="h-4 w-4" />
             <span>Block {pineapple.activatedBlock}</span>
+          </div>
+        )}
+
+        {pineapple.lotionDeadlineBlock && (
+          <div className="flex items-center space-x-2 text-gray-400">
+            <Timer className="h-4 w-4" />
+            <span>Lotion Deadline: {pineapple.lotionDeadlineBlock}</span>
           </div>
         )}
         
