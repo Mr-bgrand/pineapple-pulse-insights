@@ -10,12 +10,18 @@ const fetchWithCORS = async (url: string) => {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
-      mode: 'cors', // Explicitly set CORS mode
-      credentials: 'omit' // Don't send credentials
+      mode: 'no-cors', // Change to no-cors to handle the CORS issue
+      credentials: 'omit'
     });
     
-    if (!response.ok) {
+    if (!response.ok && response.type !== 'opaque') {
       throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    // Handle opaque response
+    if (response.type === 'opaque') {
+      console.log('Received opaque response - this is expected with no-cors mode');
+      return null;
     }
     
     return response;
@@ -27,6 +33,7 @@ const fetchWithCORS = async (url: string) => {
 
 export const fetchChildInscriptions = async (inscriptionId: string): Promise<PineappleChild[]> => {
   try {
+    console.log(`Fetching children for detonated pineapple ${inscriptionId}`);
     const response = await fetchWithCORS(
       `https://api.ordiscan.com/v1/inscription/${inscriptionId}/children`
     );
@@ -50,6 +57,7 @@ export const fetchChildInscriptions = async (inscriptionId: string): Promise<Pin
 
 export const fetchInscriptionDetails = async (inscriptionId: string) => {
   try {
+    console.log(`Fetching details for inscription ${inscriptionId}`);
     const response = await fetchWithCORS(
       `https://api.ordiscan.com/v1/inscription/${inscriptionId}`
     );
