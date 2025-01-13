@@ -7,13 +7,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pineapple } from "@/lib/pineapple-utils";
+import { calculateTimeRemaining } from "@/lib/utils/status-utils";
 
 interface PineappleTableProps {
   pineapples: Pineapple[];
 }
 
 export function PineappleTable({ pineapples }: PineappleTableProps) {
-  console.log("Rendering PineappleTable with data:", pineapples);
+  // Get current block from window object (set by PineappleTracker)
+  const currentBlock = (window as any).currentBlock || 0;
   
   return (
     <div className="rounded-md border">
@@ -24,8 +26,9 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
             <TableHead>Inscription ID</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Activated Block</TableHead>
-            <TableHead>Detonation Block</TableHead>
-            <TableHead>Lotion Deadline</TableHead>
+            <TableHead>Lotion Deadline (D:HH:mm)</TableHead>
+            <TableHead>Cooldown (D:HH:mm)</TableHead>
+            <TableHead>Detonation (D:HH:mm)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -38,13 +41,20 @@ export function PineappleTable({ pineapples }: PineappleTableProps) {
                 </TableCell>
                 <TableCell className="capitalize">{pineapple.status}</TableCell>
                 <TableCell>{pineapple.activatedBlock || "N/A"}</TableCell>
-                <TableCell>{pineapple.detonationBlock || "N/A"}</TableCell>
-                <TableCell>{pineapple.lotionDeadlineBlock || "N/A"}</TableCell>
+                <TableCell>
+                  {calculateTimeRemaining(pineapple.lotionDeadlineBlock, currentBlock)}
+                </TableCell>
+                <TableCell>
+                  {calculateTimeRemaining(pineapple.cooldownBlock, currentBlock)}
+                </TableCell>
+                <TableCell>
+                  {calculateTimeRemaining(pineapple.detonationBlock, currentBlock)}
+                </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
+              <TableCell colSpan={7} className="text-center">
                 No pineapple data available
               </TableCell>
             </TableRow>

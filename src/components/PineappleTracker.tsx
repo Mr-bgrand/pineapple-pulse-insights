@@ -44,6 +44,13 @@ export function PineappleTracker() {
     return () => clearInterval(interval);
   }, []);
 
+  // Set current block in window object for PineappleTable
+  useEffect(() => {
+    if (currentBlock) {
+      (window as any).currentBlock = currentBlock;
+    }
+  }, [currentBlock]);
+
   if (error) {
     console.error("Render error:", error);
     return <div className="p-6 text-red-500">Error loading pineapple data</div>;
