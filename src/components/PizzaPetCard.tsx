@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PizzaPet } from "@/lib/pizza-pets-utils";
 import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Clock, Heart, Poop } from "lucide-react";
+import { Clock, Heart, Activity } from "lucide-react";
 
 interface PizzaPetCardProps {
   pet: PizzaPet;
@@ -45,7 +45,7 @@ export function PizzaPetCard({ pet }: PizzaPetCardProps) {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Poop className="w-4 h-4" />
+            <Activity className="w-4 h-4" />
             <span>{pet.stats.poopRate}</span>
           </div>
 
