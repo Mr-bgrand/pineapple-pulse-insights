@@ -37,10 +37,14 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
       }
     });
 
-    const tokens = Array.isArray(data) ? data : data.tokens || [];
+    // Handle both array response and object with tokens property
+    const tokens = data.tokens || data || [];
     console.log('Raw token data:', tokens);
 
-    const filteredTokens = tokens.filter(token => token.collectionSymbol === collectionFilter);
+    const filteredTokens = tokens.filter(token => 
+      token.collectionSymbol === collectionFilter || 
+      (token.collection && token.collection.symbol === collectionFilter)
+    );
 
     if (filteredTokens.length === 0) {
       console.log(`No tokens found in the collection "${collectionFilter}".`);
@@ -53,12 +57,12 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
       meta: {
         name: token.meta?.name || `Token ID: ${token.inscriptionNumber}` || 'Unknown',
         attributes: token.meta?.attributes || [],
-        imageUrl: token.meta?.collection_page_img_url || '',
+        imageUrl: token.meta?.collection_page_img_url || token.contentPreviewURI || '',
       },
       stats: {
-        type: 'Loading...',
-        stage: 'Loading...',
-        weakness: 'Loading...',
+        type: token.meta?.attributes?.find(attr => attr.trait_type === 'Elemental Type')?.value || 'Loading...',
+        stage: token.meta?.attributes?.find(attr => attr.trait_type === 'Stage of Evolution')?.value || 'Loading...',
+        weakness: token.meta?.attributes?.find(attr => attr.trait_type === 'Pineapple Weakness')?.value || 'Loading...',
         evolutionRate: 'Loading...',
         poopRate: 'Loading...',
         healthRate: 'Loading...',
