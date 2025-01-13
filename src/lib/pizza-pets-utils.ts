@@ -31,22 +31,34 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
 
   try {
     console.log('Fetching Pizza Pets - Starting API call');
+    console.log('Using wallet address:', walletAddress);
+    console.log('Using proxy URL:', proxyUrl);
+    
     const { data } = await axios.get(proxyUrl);
-    console.log('Fetching Pizza Pets - Raw API Response:', data);
+    console.log('Fetching Pizza Pets - Raw API Response:', JSON.stringify(data, null, 2));
+
+    if (!data.tokens) {
+      console.log('No tokens array found in response');
+      return [];
+    }
 
     // Filter for pizza-pets collection
-    const pizzaPets = data.tokens.filter(token => 
-      token.collectionSymbol === collectionFilter ||
-      (token.collection && token.collection.symbol === collectionFilter)
-    );
+    const pizzaPets = data.tokens.filter(token => {
+      const isMatch = token.collectionSymbol === collectionFilter ||
+        (token.collection && token.collection.symbol === collectionFilter);
+      console.log(`Token ${token.id} collection match: ${isMatch}`);
+      return isMatch;
+    });
     
-    console.log('Fetching Pizza Pets - Filtered Pets:', pizzaPets);
+    console.log('Fetching Pizza Pets - Filtered Pets:', JSON.stringify(pizzaPets, null, 2));
 
     return pizzaPets.map(token => {
       const attributes = token.meta?.attributes || [];
-      console.log('Processing Pet Token:', token.id, 'Attributes:', attributes);
+      console.log('Processing Pet Token:', token.id);
+      console.log('Token Meta:', token.meta);
+      console.log('Token Attributes:', attributes);
       
-      return {
+      const pet = {
         meta: {
           name: token.meta?.name || `Pizza Pet #${token.inscriptionNumber}`,
           attributes: attributes,
@@ -64,9 +76,19 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
           diesIn: 'Loading...',
         }
       };
+      
+      console.log('Processed Pet Object:', JSON.stringify(pet, null, 2));
+      return pet;
     });
   } catch (error) {
     console.error('Error in fetchPizzaPets:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error Details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+    }
     throw error;
   }
 };
