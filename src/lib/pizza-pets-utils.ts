@@ -30,49 +30,43 @@ export const fetchPizzaPets = async (): Promise<PizzaPet[]> => {
   const collectionFilter = "pizza-pets";
 
   try {
-    console.log(`Fetching Pizza Pets for wallet: ${walletAddress}`);
-    const { data } = await axios.get(proxyUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
+    console.log('Fetching Pizza Pets - Starting API call');
+    const { data } = await axios.get(proxyUrl);
+    console.log('Fetching Pizza Pets - Raw API Response:', data);
 
-    const tokens = data.tokens || data || [];
-    console.log('Raw token data:', tokens);
-
-    const filteredTokens = tokens.filter(token => 
-      token.collectionSymbol === collectionFilter || 
+    // Filter for pizza-pets collection
+    const pizzaPets = data.tokens.filter(token => 
+      token.collectionSymbol === collectionFilter ||
       (token.collection && token.collection.symbol === collectionFilter)
     );
+    
+    console.log('Fetching Pizza Pets - Filtered Pets:', pizzaPets);
 
-    if (filteredTokens.length === 0) {
-      console.log(`No tokens found in the collection "${collectionFilter}".`);
-      return [];
-    }
-
-    console.log(`Found ${filteredTokens.length} tokens in the collection "${collectionFilter}".`);
-
-    return filteredTokens.map(token => ({
-      meta: {
-        name: token.meta?.name || `Token ID: ${token.inscriptionNumber}` || 'Unknown',
-        attributes: token.meta?.attributes || [],
-        imageUrl: token.meta?.collection_page_img_url || token.contentPreviewURI || '',
-        inscriptionId: token.id || '',
-      },
-      stats: {
-        type: token.meta?.attributes?.find(attr => attr.trait_type === 'Elemental Type')?.value || 'Loading...',
-        stage: token.meta?.attributes?.find(attr => attr.trait_type === 'Stage of Evolution')?.value || 'Loading...',
-        weakness: token.meta?.attributes?.find(attr => attr.trait_type === 'Pineapple Weakness')?.value || 'Loading...',
-        evolutionRate: 'Loading...',
-        poopRate: 'Loading...',
-        healthRate: 'Loading...',
-        poopIncoming: 'Loading...',
-        diesIn: 'Loading...',
-      }
-    }));
+    return pizzaPets.map(token => {
+      const attributes = token.meta?.attributes || [];
+      console.log('Processing Pet Token:', token.id, 'Attributes:', attributes);
+      
+      return {
+        meta: {
+          name: token.meta?.name || `Pizza Pet #${token.inscriptionNumber}`,
+          attributes: attributes,
+          imageUrl: token.meta?.collection_page_img_url || token.contentPreviewURI,
+          inscriptionId: token.id,
+        },
+        stats: {
+          type: attributes.find(attr => attr.trait_type === 'Elemental Type')?.value || 'Unknown',
+          stage: attributes.find(attr => attr.trait_type === 'Stage of Evolution')?.value || 'Unknown',
+          weakness: attributes.find(attr => attr.trait_type === 'Pineapple Weakness')?.value || 'Unknown',
+          evolutionRate: 'Loading...',
+          poopRate: 'Loading...',
+          healthRate: attributes.find(attr => attr.trait_type === 'Hearts Remaining')?.value || 'Unknown',
+          poopIncoming: 'Loading...',
+          diesIn: 'Loading...',
+        }
+      };
+    });
   } catch (error) {
-    console.error('Error fetching Pizza Pets:', error);
-    return [];
+    console.error('Error in fetchPizzaPets:', error);
+    throw error;
   }
 };
