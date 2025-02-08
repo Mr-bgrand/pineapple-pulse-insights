@@ -1,3 +1,4 @@
+
 import { Pineapple } from "../types/pineapple";
 
 export const MOCK_PINEAPPLES: Pineapple[] = [
@@ -13,12 +14,12 @@ export const MOCK_PINEAPPLES: Pineapple[] = [
     name: "White Pineapple", 
     color: "White", 
     inscriptionId: "79467381", 
-    status: "detonated", 
+    status: "active", 
     rechargePeriod: 5,
-    activatedBlock: 877704,
-    detonationBlock: 877776,
-    lotionDeadlineBlock: 877742, // 877704 + 38
-    cooldownBlock: 877759, // example cooldown block
+    activatedBlock: 882823,
+    detonationBlock: 882895,  // 882823 + 72
+    lotionDeadlineBlock: 882861, // 882823 + 38
+    cooldownBlock: 882878, // 882823 + 55
     lastChild: {
       inscriptionId: "79467999",
       timestamp: new Date().toISOString(),
